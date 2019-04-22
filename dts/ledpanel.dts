@@ -1,0 +1,67 @@
+/dts-v1/;
+
+#include <libfirmware/dts/stm32f10x.dtsi>
+#include <libfirmware/dts/stm32f10x.h>
+#include <libfirmware/dts/stm32f10x_gpio.h>
+
+/ {
+	serial {
+		debug_uart: debug {
+			compatible = "st,stm32_uart";
+			baud = <115200>;
+			reg = <USART1>;
+			interrupt = <USART1_IRQn>;
+            rx_queue = <8>;
+            tx_queue = <8>;
+            printk_port = <1>;
+
+            debug_serial_pins {
+                compatible = "st,stm32_gpio";
+                pinctrl = <
+                    GPIOA GPIO_Pin_9  (GPIO_Mode_AF_PP | GPIO_Speed_50MHz) /* TX */
+                    GPIOA GPIO_Pin_10 (GPIO_Mode_IPU | GPIO_Speed_50MHz) /* RX */
+                >;
+            };
+		};
+    };
+
+    panel_pins: panel_pins {
+        compatible = "st,stm32_gpio";
+        pinctrl = <
+            GPIOB GPIO_Pin_9 (GPIO_Mode_Out_PP | GPIO_Speed_50MHz) /* A */
+            GPIOB GPIO_Pin_8 (GPIO_Mode_Out_PP | GPIO_Speed_50MHz) /* B */
+            GPIOB GPIO_Pin_7 (GPIO_Mode_Out_PP | GPIO_Speed_50MHz) /* C */
+            GPIOB GPIO_Pin_6 (GPIO_Mode_Out_PP | GPIO_Speed_50MHz) /* D */
+            GPIOB GPIO_Pin_5 (GPIO_Mode_Out_PP | GPIO_Speed_50MHz) /* GD */
+            GPIOB GPIO_Pin_14 (GPIO_Mode_Out_PP | GPIO_Speed_50MHz) /* RD */
+            GPIOB GPIO_Pin_15 (GPIO_Mode_Out_PP | GPIO_Speed_50MHz) /* LAT */
+            GPIOA GPIO_Pin_12 (GPIO_Mode_Out_PP | GPIO_Speed_50MHz) /* CLK */
+            GPIOA GPIO_Pin_11 (GPIO_Mode_Out_PP | GPIO_Speed_50MHz) /* OE */
+        >;
+    };
+
+    ledpanel {
+        compatible = "mk,ledpanel";
+        pins = <&panel_pins>;
+        width = <64>;
+        height = <16>;
+        bpp = <2>;
+        fb_width = <256>;
+    };
+
+	leds: leds {
+   		compatible = "st,stm32_leds";
+		inverted = <1>;
+		pins = <&led_pins>;
+     	led_pins: led_pins {
+            compatible = "st,stm32_gpio";
+			pinctrl = <
+				GPIOC GPIO_Pin_13 (GPIO_Mode_Out_PP | GPIO_Speed_2MHz)
+			>;
+		};
+	};
+
+	logopanel {
+		compatible = "mk,logopanel";
+	};
+};
